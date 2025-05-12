@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block head %}
+<style>
+    .layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container-duas-colunas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+        margin-top: 30px;
+    }
+
+    .coluna {
+        flex: 1 1 45%;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .jogador {
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .coluna {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="layout">
+    <div class="text-center">
+        <h1 class="mt-4">Bem-vindo à ScoutApp!</h1>
+        <p class="lead">Você está logado e pode acessar as funcionalidades da plataforma.</p>
+    </div>
+
+    <div class="container-duas-colunas">
+        <div class="coluna">
+            <h2>Total de jogadores: {{total}}</h2>
+            <hr>
+            <h2>Gráfico</h2>
+            <img src="data:image/png;base64,{{ grafico }}" alt="Gráfico de Rosca">
+            <hr>
+            <h2>Gráfico 1</h2>
+            <img src="data:image/png;base64,{{ grafico1 }}" alt="Gráfico de Rosca">
+        </div>
+        <hr>
+        <div class="coluna">
+            <h2>Destaques</h2>
+            <hr>
+            {% for index, jogador in jogadores.iterrows() %}
+            <div class="card-jogador">
+                <img src="data:image/png;base64,{{ jogador['foto_base64'] }}" width="200" height="300">
+                <div class="card-info">
+                    <h3>{{ jogador.nome }}</h3>
+                    <p>Posicao: {{ jogador.posicao }}</p>
+                    <p>Nascimento: {{ jogador.nascimento.year }}</p>
+                </div>
+            </div>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

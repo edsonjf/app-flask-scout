@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .container {
+        display: flex;
+        gap: 10px; /* Espaçamento entre as linhas */
+    }
+    
+    .linha {
+        display: auto; /* Itens dentro de uma linha serão dispostos  */
+        gap: 2%; /* Espaçamento entre os itens dentro de cada linha */
+        
+    }
+
+    .card {
+        margin: 20px;
+
+    }
+
+    .card-linha {
+        display: flex; /* Itens dentro de uma linha serão dispostos na horizontal */
+        gap: 2%; /* Espaçamento entre os itens dentro de cada linha */
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .card-clicavel {
+        cursor: pointer;
+        padding: 20px;
+        background-color: #f4f4f4;
+        margin-bottom: 10px;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+    }
+    
+    .card-clicavel:hover {
+        background-color: #e0f7fa;
+    }
+
+    .card-clicavel.selecionado {
+        border-color: #4CAF50;
+        background-color: #e0fce0;
+    }
+    
+    .coluna {
+        flex: 1;
+        padding: 15px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="width: 90vw; min-width: 70vw;">
+    <div class="card"style="width: 80vw;">
+        <!-- Coluna 1: Filtros -->
+        <div class="container" >
+            <form method="get" action="/pesquisa" >
+                <div class="row" style="margin: 1rem; gap: 1rem;">
+                    <div class="coluna">
+                        <label for="nomeForm">Nome:</label><br>
+                        <input type="text" id="nomeForm" name="nomeForm" value="{{ termo }}"><br>
+                        
+                        <label for="posicaoForm">Posição:</label><br>
+                        <input type="text" id="posicaoForm" name="posicaoForm"><br>
+                    </div>
+                    <div class="coluna">
+                        <label for="ano_inicio">Ano de início:</label><br>
+                        <select name="ano_inicio" id="ano_inicio" required>
+                            {% for ano in anos %}
+                                <option value="{{ ano }}">{{ ano }}</option>
+                            {% endfor %}
+                        </select><br>
+
+                        <label for="ano_fim">Ano de fim:</label><br>
+                        <select name="ano_fim" id="ano_fim" required>
+                            {% for ano in anos %}
+                                <option value="{{ ano }}" {% if ano == 2007 %}selected{% endif %}>{{ ano }}</option>
+                            {% endfor %}
+                            
+                        </select><br><br>
+
+                        <button type="submit">Buscar</button>
+                    </div>
+                
+                    
+                </div>   
+            </form>
+        </div>
+        <!-- Coluna 2: Seleção -->
+        <div class="card">
+            <form method="POST" id="form">
+                <h3>Selecione um usuário clicando no card:</h3>
+                <div class="card-linha">
+                    
+                    <input type="hidden" name="usuario_id" id="usuario_id">                    
+                    {% for usuario in opcoes %}
+                        <div class="card-clicavel" data-id="{{ usuario.id }}" style="width: 21%; height: 16vh;">
+                            <p><strong>{{ usuario.apelido }}</strong></p>
+                            <p style="font-size: 70%">{{ usuario.posicao }} | {{ usuario.nascimento.year }}</p>
+                        </div>
+                    {% endfor %}
+                    </div>
+            </form>
+        </div>
+        
+        <!-- Coluna 3: Cards e resultado -->
+        <div class="container">
+            <div class="coluna">
+                <h2>Coluna 1</h2>
+                <p>Conteúdo da primeira coluna.</p>
+                <div class="card">
+                    <div class="container mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2>Coluna 1.1</h2>
+                                <p>Conteúdo da primeira coluna.</p>
+                                {% if selecionado  %}
+                                    <div class="">
+                                        <h3>{{ selecionado.nome }}</h3>
+                                        <img src="data:image/png;base64,{{ selecionado.foto_base64 }}" width="95%" height="300">
+                                        
+                                    </div>
+                                {% endif%}
+                            </div>
+                            <div class="col-md-6">
+                                <h2>Coluna 1.2</h2>
+                                {% if selecionado  %}
+                                    <div class="">
+                                        
+                                        <p><strong>Apelido:</strong> {{ selecionado.apelido }}</p>
+                                        <p><strong>Posição:</strong> {{ selecionado.posicao }}</p>
+                                        <p><strong>Nascimento:</strong> {{ selecionado.nascimento }}</p>
+                                        <p><strong>Nacionalidade:</strong> {{ selecionado.nacionalidade }}</p>
+                                        <p><strong>Naturalidade:</strong> {{ selecionado.naturalidade }}</p>
+                                        <p><strong>Pé:</strong> {{ selecionado.pe }}</p>
+                                        <p><strong>Altura:</strong> {{ selecionado.altura }}</p>
+                                        <p><strong>Peso:</strong> {{ selecionado.peso }}</p>
+                                    </div>
+                                {% endif%}
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="coluna">
+                <h2>Coluna 2</h2>
+                <p>Conteúdo da segunda coluna.</p>
+                <p>Números</p>
+                <div style="display: flex; gap: 12%;">
+                    {% if tabela_geral %}
+                                <p>Jogos: {{ tabela_geral[-1].jogos }}</p>
+                                <p>Minutos: {{ tabela_geral[-1].minutos }}</p>
+                                <p>Gols: {{ tabela_geral[-1].gols }}</p>
+                                <p>Assistências: {{ tabela_geral[-1].assistencias }}</p>
+                    {% endif %}
+                </div>
+                
+                <div class="card">
+                    <p>Gráfico</p>
+                    <img src="data:image/png;base64,{{ grafico }}" alt="Gráfico">
+                </div>
+            </div>
+            
+        </div>
+        <div class="card">
+            <div class="card">
+                <h2>Estatísticas do Jogador</h2>
+                {% if tabela_geral %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Competição</th>
+                                <th>Jogos</th>
+                                <th>Minutos</th>
+                                <th>Gols</th>
+                                <th>Assistências</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for linha in tabela_geral %}
+                            <tr>
+                                <td>{{ linha.competicao }}</td>
+                                <td>{{ linha.jogos }}</td>
+                                <td>{{ linha.minutos }}</td>
+                                <td>{{ linha.gols }}</td>
+                                <td>{{ linha.assistencias }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Nenhuma informação disponível.</p>
+                {% endif %}
+            </div>
+            <div class="card">
+                <h2>Carreita do Jogador</h2>
+                {% if carreira %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ano</th>
+                                <th>Time</th>
+                                <th>Jogos</th>
+                                <th>Gols</th>
+                                <th>Assistências</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for linha in carreira %}
+                            <tr>
+                                <td>{{ linha.ano }}</td>
+                                <td>{{ linha.time }}</td>
+                                <td>{{ linha.jogos }}</td>
+                                <td>{{ linha.gols }}</td>
+                                <td>{{ linha.assistencias }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Nenhuma informação disponível.</p>
+                {% endif %}
+            </div>
+            <div class="card">
+                    <p>Gráfico 2</p>
+                    <img src="data:image/png;base64,{{ grafico1 }}" alt="Gráfico">
+                </div>
+            <div class="card">
+                <h2>Jogos temporada</h2>
+                {% if jogos %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Resultado</th>
+                                <th>Data</th>
+                                <th>Competicão</th>
+                                <th>Fase</th>
+                                <th>Clube</th>
+                                <th>Local</th>
+                                <th>Adversário</th>
+                                <th>Placar</th>
+                                <th>Minutagem</th>
+                                <th>Tempo substituição</th>
+                                <th>Amarelo</th>
+                                <th>Vermelho</th>
+                                <th>Gols</th>
+                                <th>Assistências</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for linha in jogos %}
+                            <tr>
+                                <td>{{ linha.resultado }}</td>
+                                <td>{{ linha.data }}</td>
+                                <td>{{ linha.competicao }}</td>
+                                <td>{{ linha.fase }}</td>
+                                <td>{{ linha.clube }}</td>
+                                <td>{{ linha.local }}</td>
+                                <td>{{ linha.adversario }}</td>
+                                <td>{{ linha.placar }}</td>
+                                <td>{{ linha.minutagem }}</td>
+                                <td>{{ linha.tempo_substituicao }}</td>
+                                <td>{{ linha.amarelo }}</td>
+                                <td>{{ linha.vermelho }}</td>
+                                <td>{{ linha.gols }}</td>
+                                <td>{{ linha.assistencias }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Nenhuma informação disponível.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cards = document.querySelectorAll('.card-clicavel');
+    const inputId = document.getElementById('usuario_id');
+    const form = document.getElementById('form');
+
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('selecionado'));
+            card.classList.add('selecionado');
+            inputId.value = card.dataset.id;
+            form.submit();
+        });
+    });
+</script>
+{% endblock %}
