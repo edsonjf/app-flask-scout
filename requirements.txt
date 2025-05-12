@@ -5,3 +5,4 @@ Flask-Migrate==4.1.0
 requests==2.31.0
 matplotlib==3.10.1
 pandas
+gunicorn==21.2.0
