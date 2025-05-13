@@ -6,6 +6,7 @@ from funcoes import grafico_rosca, grafico_jogos_temporada, carregar_dados_db, c
 import pandas as pd
 from io import BytesIO
 import base64
+import os
 
 app = Flask(__name__)
 app.secret_key = 'teste'
@@ -183,4 +184,5 @@ def logout():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+    port = int(os.environ.get("PORT", 81)) 
     app.run(host='0.0.0.0', port=81)
